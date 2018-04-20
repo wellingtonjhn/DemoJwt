@@ -1,4 +1,5 @@
 ﻿using DemoJwt.Api.Extensions;
+using DemoJwt.IoC;
 using GlobalExceptionHandler.WebApi;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -24,8 +25,8 @@ namespace DemoJwt.Api
             services.AddSingleton(Configuration);
             services.AddLogging();
             services.AddSwagger();
-
-            services.AddAuthorizedMvc(Configuration);
+            services.AddAuthorizedMvc();
+            services.AddApplicationServices();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
@@ -42,10 +43,16 @@ namespace DemoJwt.Api
                 });
             }
 
-            loggerFactory.AddLog4Net();
+            loggerFactory.AddConsole();
 
             app.UseAuthentication();
+            UseExceptionHandling(app, loggerFactory);
 
+            app.UseMvc();
+        }
+
+        private static void UseExceptionHandling(IApplicationBuilder app, ILoggerFactory loggerFactory)
+        {
             app.UseExceptionHandler().WithConventions(config =>
             {
                 config.ContentType = "application/json";
@@ -61,8 +68,6 @@ namespace DemoJwt.Api
                     return Task.CompletedTask;
                 });
             });
-
-            app.UseMvc();
         }
     }
 }

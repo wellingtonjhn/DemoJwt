@@ -1,28 +1,20 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.PlatformAbstractions;
 using Swashbuckle.AspNetCore.Swagger;
+using Swashbuckle.AspNetCore.SwaggerGen;
 using System.IO;
 
 namespace DemoJwt.Api.Extensions
 {
-    /// <summary>
-    /// Representa extensões para configurar o Swagger para gerar documentação dos endpoints da API
-    /// </summary>
     public static class SwaggerExtensions
     {
-        /// <summary>
-        /// Registra o Swagger no injetor de dependências
-        /// </summary>
-        /// <param name="services">Instância do injetor de dependências</param>
         public static void AddSwagger(this IServiceCollection services)
         {
-            var applicationPath = PlatformServices.Default.Application.ApplicationBasePath;
-            var applicationName = PlatformServices.Default.Application.ApplicationName;
-            var xmlDocPath = Path.Combine(applicationPath, $"{applicationName}.xml");
-
-            services.AddSwaggerGen(c =>
+            services.AddSwaggerGen(options =>
             {
-                c.SwaggerDoc("v1",
+                options.SchemaFilter<SwaggerExcludePropertiesFilter>();
+
+                options.SwaggerDoc("v1",
                     new Info
                     {
                         Title = "Demo Jwt",
@@ -35,7 +27,7 @@ namespace DemoJwt.Api.Extensions
                         }
                     });
 
-                c.AddSecurityDefinition(
+                options.AddSecurityDefinition(
                     "bearer",
                     new ApiKeyScheme
                     {
@@ -45,8 +37,25 @@ namespace DemoJwt.Api.Extensions
                         Type = "apiKey"
                     });
 
-                c.IncludeXmlComments(xmlDocPath);
+                SetXmlDocumentation(options);
             });
+        }
+
+        private static void SetXmlDocumentation(SwaggerGenOptions options)
+        {
+            var xmlDocumentPath = GetXmlDocumentPath();
+            var existsXmlDocument = File.Exists(xmlDocumentPath);
+
+            if (existsXmlDocument)
+            {
+                options.IncludeXmlComments(xmlDocumentPath);
+            }
+        }
+        private static string GetXmlDocumentPath()
+        {
+            var applicationBasePath = PlatformServices.Default.Application.ApplicationBasePath;
+            var applicationName = PlatformServices.Default.Application.ApplicationName;
+            return Path.Combine(applicationBasePath, $"{applicationName}.xml");
         }
     }
 }

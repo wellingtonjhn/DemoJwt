@@ -1,32 +1,33 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using DemoJwt.Api.Security;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using System.Text;
 
 namespace DemoJwt.Api.Extensions
 {
     public static class MvcExtensions
     {
-        public static void AddAuthorizedMvc(this IServiceCollection services, IConfiguration configuration)
+        public static void AddAuthorizedMvc(this IServiceCollection services)
         {
-            AddAuthorization(services, configuration);
+            AddJwtAuthorization(services);
             AddAuthenticatedUser(services);
             AddMvc(services);
         }
 
-        private static void AddAuthorization(IServiceCollection services, IConfiguration configuration)
+        private static void AddJwtAuthorization(IServiceCollection services)
         {
+            services.AddSingleton<JwtSettings>();
+            services.AddScoped<IJwtService, JwtService>();
+
+            var jwtSettings = services.BuildServiceProvider().GetRequiredService<JwtSettings>();
+
             services
                 .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(jwtBearerOptions =>
                 {
-                    var issuer = configuration["Authentication:Issuer"];
-                    var audience = configuration["Authentication:Audience"];
-                    var signingKey = configuration["Authentication:SigningKey"];
-
                     jwtBearerOptions.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateIssuer = true,
@@ -34,9 +35,9 @@ namespace DemoJwt.Api.Extensions
                         ValidateAudience = true,
                         ValidateLifetime = true,
                         ValidateIssuerSigningKey = true,
-                        ValidIssuer = issuer,
-                        ValidAudience = audience,
-                        IssuerSigningKey = GetSigningCredentials(signingKey).Key
+                        ValidIssuer = jwtSettings.Issuer,
+                        ValidAudience = jwtSettings.Audience,
+                        IssuerSigningKey = jwtSettings.SigningCredentials.Key
                     };
                 });
 
@@ -50,7 +51,7 @@ namespace DemoJwt.Api.Extensions
             //        .Build());
             //});
         }
-
+        
         private static void AddAuthenticatedUser(IServiceCollection services)
         {
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
@@ -65,15 +66,8 @@ namespace DemoJwt.Api.Extensions
                     .RequireAuthenticatedUser()
                     .Build();
 
-                //config.Filters.Add(new AuthorizeFilter(policy));
+                config.Filters.Add(new AuthorizeFilter(policy));
             });
-        }
-
-        private static SigningCredentials GetSigningCredentials(string key)
-        {
-            //var symmetricSecurityKey = new SymmetricSecurityKey(WebEncoders.Base64UrlDecode(key));
-            var symmetricKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
-            return new SigningCredentials(symmetricKey, SecurityAlgorithms.HmacSha256Signature);
         }
     }
 }

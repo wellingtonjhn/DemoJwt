@@ -1,5 +1,4 @@
-﻿using DemoJwt.Api.Extensions;
-using DemoJwt.Api.Settings;
+﻿using DemoJwt.Api.Security;
 using DemoJwt.Application.Models;
 using DemoJwt.Application.Requests;
 using MediatR;
@@ -13,14 +12,12 @@ namespace DemoJwt.Api.Controllers
     public class AccountsController : Controller
     {
         private readonly IMediator _mediator;
-        private readonly JwtSettings _jwtSettings;
-        private readonly SigningSettings _signingSettings;
+        private readonly IJwtService _jwtService;
 
-        public AccountsController(IMediator mediator, JwtSettings jwtSettings, SigningSettings signingSettings)
+        public AccountsController(IMediator mediator, IJwtService jwtService)
         {
             _mediator = mediator;
-            _jwtSettings = jwtSettings;
-            _signingSettings = signingSettings;
+            _jwtService = jwtService;
         }
 
         /// <summary>
@@ -54,8 +51,8 @@ namespace DemoJwt.Api.Controllers
                 return BadRequest(response.Messages);
             }
 
-            var identity = SecurityExtensions.GetClaimsIdentity((User)response.Value, _jwtSettings);
-            var jwt = identity.CreateJwtToken(_jwtSettings, _signingSettings);
+            var user = (User)response.Value;
+            var jwt = _jwtService.CreateJwtToken(user);
 
             return Ok(jwt);
         }
