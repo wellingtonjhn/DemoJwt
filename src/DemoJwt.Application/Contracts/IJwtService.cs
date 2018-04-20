@@ -1,6 +1,6 @@
 ﻿using DemoJwt.Application.Models;
 
-namespace DemoJwt.Api.Security
+namespace DemoJwt.Application.Contracts
 {
     public interface IJwtService
     {

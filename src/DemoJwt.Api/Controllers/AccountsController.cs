@@ -1,6 +1,4 @@
-﻿using DemoJwt.Api.Security;
-using DemoJwt.Application.Models;
-using DemoJwt.Application.Requests;
+﻿using DemoJwt.Application.Requests;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,12 +10,10 @@ namespace DemoJwt.Api.Controllers
     public class AccountsController : Controller
     {
         private readonly IMediator _mediator;
-        private readonly IJwtService _jwtService;
 
-        public AccountsController(IMediator mediator, IJwtService jwtService)
+        public AccountsController(IMediator mediator)
         {
             _mediator = mediator;
-            _jwtService = jwtService;
         }
 
         /// <summary>
@@ -34,7 +30,7 @@ namespace DemoJwt.Api.Controllers
                 return BadRequest(response.Messages);
             }
 
-            return Created("accounts/profile", response);
+            return Created("accounts/profile", response.Value);
         }
 
         /// <summary>
@@ -51,10 +47,7 @@ namespace DemoJwt.Api.Controllers
                 return BadRequest(response.Messages);
             }
 
-            var user = (User)response.Value;
-            var jwt = _jwtService.CreateJwtToken(user);
-
-            return Ok(jwt);
+            return Ok(response.Value);
         }
 
         /// <summary>
@@ -64,14 +57,14 @@ namespace DemoJwt.Api.Controllers
         [HttpGet, Route("profile")]
         public async Task<IActionResult> Get()
         {
-            var response = await _mediator.Send(new QueryUserInformation());
+            var response = await _mediator.Send(new QueryUserProfile());
 
             if (response == null)
             {
                 return NoContent();
             }
 
-            return Ok(response);
+            return Ok(response.Value);
         }
 
         /// <summary>
@@ -89,7 +82,7 @@ namespace DemoJwt.Api.Controllers
                 return BadRequest(response.Messages);
             }
 
-            return Ok(response);
+            return Ok(response.Value);
         }
     }
 }

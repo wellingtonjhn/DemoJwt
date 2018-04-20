@@ -32,14 +32,14 @@ namespace DemoJwt.Application.Core
         /// <param name="object">Objeto que deverá ser serializado pela Api</param>
         public Response(object @object) : this()
         {
-            AddObjectResult(@object);
+            AddValue(@object);
         }
 
         /// <summary>
         /// Adiciona um objeto que deverá ser serializado e retornado pela Api
         /// </summary>
         /// <param name="object">Objeto que deverá ser serializado pela Api</param>
-        public void AddObjectResult(object @object)
+        public void AddValue(object @object)
         {
             Value = @object;
         }

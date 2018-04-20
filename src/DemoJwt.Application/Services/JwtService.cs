@@ -1,12 +1,12 @@
-﻿using DemoJwt.Application.Models;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using DemoJwt.Application.Contracts;
+using DemoJwt.Application.Models;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Principal;
 
-namespace DemoJwt.Api.Security
+namespace DemoJwt.Application.Services
 {
     public class JwtService : IJwtService
     {
@@ -32,12 +32,12 @@ namespace DemoJwt.Api.Security
                 SigningCredentials = _settings.SigningCredentials
             });
 
-            var encodedJwt = handler.WriteToken(securityToken);
+            var jwtToken = handler.WriteToken(securityToken);
 
             return new
             {
-                access_token = encodedJwt,
-                token_type = JwtBearerDefaults.AuthenticationScheme.ToLower(),
+                access_token = jwtToken,
+                token_type = "bearer",
                 expires_in = (int)_settings.ValidFor.TotalSeconds,
             };
         }
@@ -55,11 +55,6 @@ namespace DemoJwt.Api.Security
             );
         }
 
-        /// <summary>
-        /// Converte a data em fomato UNIX
-        /// </summary>
-        /// <param name="date">Objeto de Data e Hora</param>
-        /// <returns></returns>
         private static long ToUnixEpochDate(DateTime date)
         {
             return (long)Math.Round((date.ToUniversalTime() - new DateTimeOffset(1970, 1, 1, 0, 0, 0, TimeSpan.Zero)).TotalSeconds);

@@ -1,4 +1,4 @@
-﻿using DemoJwt.Api.Security;
+﻿using DemoJwt.Application.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -19,9 +19,6 @@ namespace DemoJwt.Api.Extensions
 
         private static void AddJwtAuthorization(IServiceCollection services)
         {
-            services.AddSingleton<JwtSettings>();
-            services.AddScoped<IJwtService, JwtService>();
-
             var jwtSettings = services.BuildServiceProvider().GetRequiredService<JwtSettings>();
 
             services

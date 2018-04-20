@@ -25,8 +25,9 @@ namespace DemoJwt.Api
             services.AddSingleton(Configuration);
             services.AddLogging();
             services.AddSwagger();
-            services.AddAuthorizedMvc();
+
             services.AddApplicationServices();
+            services.AddAuthorizedMvc();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)

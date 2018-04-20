@@ -4,7 +4,7 @@ using System;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DemoJwt.Api.Security
+namespace DemoJwt.Application.Services
 {
     public class JwtSettings
     {
