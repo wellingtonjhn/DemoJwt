@@ -1,4 +1,5 @@
-﻿using DemoJwt.Application.Core;
+﻿using DemoJwt.Application.Contracts;
+using DemoJwt.Application.Core;
 using DemoJwt.Application.Requests;
 using MediatR;
 using System.Threading;
@@ -8,9 +9,29 @@ namespace DemoJwt.Application.Handlers
 {
     public class QueryUserProfileHandler : IRequestHandler<QueryUserProfile, Response>
     {
-        public Task<Response> Handle(QueryUserProfile request, CancellationToken cancellationToken)
+        private readonly IUserRepository _repository;
+        private readonly AuthenticatedUser _user;
+
+        public QueryUserProfileHandler(IUserRepository repository, AuthenticatedUser user)
         {
-            throw new System.NotImplementedException();
+            _repository = repository;
+            _user = user;
+        }
+
+        public async Task<Response> Handle(QueryUserProfile request, CancellationToken cancellationToken)
+        {
+            var response = new Response();
+
+            var user = await _repository.Get(_user.Email);
+
+            response.AddValue(new
+            {
+                user.Id,
+                user.Name,
+                user.Email
+            });
+
+            return response;
         }
     }
 }

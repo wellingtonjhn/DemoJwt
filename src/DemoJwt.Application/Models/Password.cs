@@ -1,23 +1,16 @@
-﻿using Flunt.Notifications;
-using Flunt.Validations;
-using System;
+﻿using System;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 
 namespace DemoJwt.Application.Models
 {
-    public sealed class Password : Notifiable
+    public sealed class Password
     {
         public string Encoded { get; }
 
         public Password(string password)
         {
-            AddNotifications(new Contract()
-                .Requires()
-                .IsNotNullOrEmpty(password, nameof(password), "A senha não pode ficar vazia")
-            );
-
             Encoded = EncodePassword(password);
         }
 

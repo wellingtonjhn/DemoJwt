@@ -11,16 +11,13 @@ namespace DemoJwt.Application.Requests
 
         public AuthenticateUser(string email, string password)
         {
-            var pass = new Password(password);
-
             AddNotifications(new Contract()
                 .Requires()
-                .IsEmail(email, nameof(email), "E-mail inválido"));
-
-            AddNotifications(pass);
+                .IsEmail(email, nameof(email), "E-mail inválido")
+                .IsNotNullOrEmpty(password, nameof(password), "A senha não pode ficar vazia"));
 
             Email = email;
-            Password = pass.Encoded;
+            Password = password;
 
         }
     }

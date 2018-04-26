@@ -42,6 +42,7 @@ namespace DemoJwt.Repository
 
         public async Task Save(User user)
         {
+            _context.Users.Remove(user);
             _context.Users.Add(user);
 
             await Task.CompletedTask;

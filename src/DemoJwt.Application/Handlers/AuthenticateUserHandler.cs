@@ -5,6 +5,7 @@ using Flunt.Notifications;
 using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
+using DemoJwt.Application.Models;
 
 namespace DemoJwt.Application.Handlers
 {
@@ -22,7 +23,8 @@ namespace DemoJwt.Application.Handlers
         public async Task<Response> Handle(AuthenticateUser request, CancellationToken cancellationToken)
         {
             var response = new Response();
-            var user = await _repository.Authenticate(request.Email, request.Password);
+            var encodedPassword = new Password(request.Password).Encoded;
+            var user = await _repository.Authenticate(request.Email, encodedPassword);
 
             if (user == null)
             {

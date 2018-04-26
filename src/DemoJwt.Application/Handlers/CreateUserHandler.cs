@@ -35,7 +35,6 @@ namespace DemoJwt.Application.Handlers
             {
                 response.AddNotifications(user.Notifications);
                 return response;
-
             }
 
             await _repository.Save(user);
