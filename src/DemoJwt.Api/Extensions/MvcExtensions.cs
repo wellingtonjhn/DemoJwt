@@ -1,4 +1,5 @@
-﻿using DemoJwt.Application.Services;
+﻿using DemoJwt.Application.Core;
+using DemoJwt.Application.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -39,20 +40,12 @@ namespace DemoJwt.Api.Extensions
                 });
 
             services.AddAuthorization();
-
-            //services.AddAuthorization(options =>
-            //{
-            //    options.AddPolicy("Bearer", new AuthorizationPolicyBuilder()
-            //        .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
-            //        .RequireAuthenticatedUser()
-            //        .Build());
-            //});
         }
         
         private static void AddAuthenticatedUser(IServiceCollection services)
         {
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            //services.AddScoped<IAuthenticatedUser, AuthenticatedUser>();
+            services.AddScoped<AuthenticatedUser>();
         }
 
         private static void AddMvc(IServiceCollection services)
