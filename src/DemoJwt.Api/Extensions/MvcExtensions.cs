@@ -1,4 +1,5 @@
-﻿using DemoJwt.Application.Core;
+﻿using DemoJwt.Api.Policies;
+using DemoJwt.Application.Core;
 using DemoJwt.Application.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -39,9 +40,15 @@ namespace DemoJwt.Api.Extensions
                     };
                 });
 
-            services.AddAuthorization();
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("DeleteUserPolicy", policy =>
+                    policy.Requirements.Add(new DeleteUserRequirement("CanDeleteUser")));
+            });
+
+            services.AddSingleton<IAuthorizationHandler, DeleteUserRequirementHandler>();
         }
-        
+
         private static void AddAuthenticatedUser(IServiceCollection services)
         {
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();

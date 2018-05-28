@@ -14,6 +14,7 @@ namespace DemoJwt.Application.Requests
                 .Requires()
                 .IsNotNullOrEmpty(newPassword, nameof(newPassword), "A senha não pode ficar vazia")
                 .IsNotNullOrEmpty(newPasswordConfirmation, nameof(newPasswordConfirmation), "A confirmação de senha não pode ficar vazia")
+                .AreEquals(newPassword, newPasswordConfirmation, "PasswordConfirmation", "As senhas não conferem")
             );
 
             NewPassword = newPassword;

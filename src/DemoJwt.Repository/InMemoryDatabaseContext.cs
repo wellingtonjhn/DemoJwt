@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace DemoJwt.Repository
 {
-    public  class InMemoryDatabaseContext
+    public class InMemoryDatabaseContext
     {
         public IList<User> Users { get; } = new List<User>();
     }

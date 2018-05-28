@@ -17,6 +17,7 @@ namespace DemoJwt.Application.Handlers
         {
             _repository = repository;
         }
+
         public async Task<Response> Handle(CreateUser request, CancellationToken cancellationToken)
         {
             var response = new Response();
@@ -31,6 +32,16 @@ namespace DemoJwt.Application.Handlers
 
             var user = new User(request.Name, request.Email, request.Password);
 
+            foreach (var role in request.Roles)
+            {
+                user.AddRole(role);
+            }
+
+            foreach (var policy in request.Policies)
+            {
+                user.AddPolicy(policy);
+            }
+
             if (user.Invalid)
             {
                 response.AddNotifications(user.Notifications);
@@ -43,7 +54,9 @@ namespace DemoJwt.Application.Handlers
             {
                 user.Id,
                 user.Name,
-                user.Email
+                user.Email,
+                user.Roles,
+                user.Policies
             });
 
             return response;

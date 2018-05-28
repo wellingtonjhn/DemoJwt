@@ -28,7 +28,9 @@ namespace DemoJwt.Application.Handlers
             {
                 user.Id,
                 user.Name,
-                user.Email
+                user.Email,
+                user.Roles,
+                user.Policies
             });
 
             return response;

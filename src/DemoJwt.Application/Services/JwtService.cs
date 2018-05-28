@@ -3,8 +3,10 @@ using DemoJwt.Application.Models;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Security.Principal;
+using Newtonsoft.Json;
 
 namespace DemoJwt.Application.Services
 {
@@ -44,15 +46,27 @@ namespace DemoJwt.Application.Services
 
         private ClaimsIdentity GetClaimsIdentity(User user)
         {
-            return new ClaimsIdentity
+            var identity = new ClaimsIdentity
             (
                 new GenericIdentity(user.Email),
                 new[] {
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                     new Claim(JwtRegisteredClaimNames.Sub, user.Name),
-                    new Claim(JwtRegisteredClaimNames.Iat, $"{ToUnixEpochDate(_settings.IssuedAt)}", ClaimValueTypes.Integer64)
+                    new Claim(JwtRegisteredClaimNames.Iat, $"{ToUnixEpochDate(_settings.IssuedAt)}", ClaimValueTypes.Integer64),
                 }
             );
+
+            foreach (var role in user.Roles)
+            {
+                identity.AddClaim(new Claim(ClaimTypes.Role, role));
+            }
+
+            foreach (var policy in user.Policies)
+            {
+                identity.AddClaim(new Claim("policies", policy));
+            }
+
+            return identity;
         }
 
         private static long ToUnixEpochDate(DateTime date)
