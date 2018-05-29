@@ -4,11 +4,11 @@ namespace DemoJwt.Api.Policies
 {
     public class DeleteUserRequirement : IAuthorizationRequirement
     {
-        public string RequiredRole { get; }
+        public string RequiredPermission { get; }
 
-        public DeleteUserRequirement(string requiredRole)
+        public DeleteUserRequirement(string requiredPermission)
         {
-            RequiredRole = requiredRole;
+            RequiredPermission = requiredPermission;
         }
     }
 }

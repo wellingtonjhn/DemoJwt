@@ -10,13 +10,13 @@ namespace DemoJwt.Application.Models
     public class User : Notifiable
     {
         private readonly IList<string> _roles = new List<string>();
-        private readonly IList<string> _policies = new List<string>();
+        private readonly IList<string> _permissions = new List<string>();
 
         public Guid Id { get; } = Guid.NewGuid();
         public string Name { get; }
         public string Email { get; }
         public IEnumerable<string> Roles => _roles;
-        public IEnumerable<string> Policies => _policies;
+        public IEnumerable<string> Permissions => _permissions;
 
         [JsonIgnore]
         public Password Password { get; private set; }
@@ -58,20 +58,20 @@ namespace DemoJwt.Application.Models
             _roles.Add(role);
         }
 
-        public void AddPolicy(string policy)
+        public void AddPermission(string permission)
         {
             AddNotifications(new Contract()
                 .Requires()
-                .IsNotNullOrEmpty(policy, nameof(policy), "A policy não pode ficar vazia")
+                .IsNotNullOrEmpty(permission, nameof(permission), "A permission não pode ficar vazia")
             );
 
-            if (Policies.Contains(policy))
+            if (Permissions.Contains(permission))
             {
-                AddNotification(nameof(policy), $"A policy {policy} já existe para este usuário");
+                AddNotification(nameof(permission), $"A permission {permission} já existe para este usuário");
                 return;
             }
 
-            _policies.Add(policy);
+            _permissions.Add(permission);
         }
     }
 }

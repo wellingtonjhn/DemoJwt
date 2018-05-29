@@ -1,5 +1,4 @@
-﻿using DemoJwt.Api.Policies;
-using DemoJwt.Application.Requests;
+﻿using DemoJwt.Application.Requests;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -18,6 +17,10 @@ namespace DemoJwt.Api.Controllers
             _mediator = mediator;
         }
 
+        /// <summary>
+        /// Lista todos os usuários cadastrados
+        /// </summary>
+        /// <returns></returns>
         [HttpGet, Route("accounts")]
         public async Task<IActionResult> ListUsers()
         {
@@ -27,6 +30,11 @@ namespace DemoJwt.Api.Controllers
             return Ok(response.Value);
         }
 
+        /// <summary>
+        /// Deleta um usuário
+        /// </summary>
+        /// <param name="accountId">Id do usuário</param>
+        /// <returns></returns>
         [HttpDelete, Route("accounts/{accountId}"), Authorize(Policy = "DeleteUserPolicy")]
         public async Task<IActionResult> DeleteAccount(Guid accountId)
         {

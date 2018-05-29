@@ -1,22 +1,21 @@
 ﻿using DemoJwt.Application.Core;
 using Flunt.Validations;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace DemoJwt.Application.Requests
 {
     public class CreateUser : Request<Response>
     {
         private readonly List<string> _roles = new List<string>();
-        private readonly List<string> _policies = new List<string>();
+        private readonly List<string> _permissions = new List<string>();
 
         public string Name { get; }
         public string Email { get; }
         public string Password { get; }
         public IEnumerable<string> Roles => _roles;
-        public IEnumerable<string> Policies => _policies;
+        public IEnumerable<string> Permissions => _permissions;
 
-        public CreateUser(string name, string email, string password, IEnumerable<string> roles, IEnumerable<string> policies)
+        public CreateUser(string name, string email, string password, IEnumerable<string> roles, IEnumerable<string> permissions)
         {
             AddNotifications(new Contract()
                 .Requires()
@@ -34,9 +33,9 @@ namespace DemoJwt.Application.Requests
                 _roles.AddRange(roles);
             }
 
-            if (policies != null)
+            if (permissions != null)
             {
-                _policies.AddRange(policies);
+                _permissions.AddRange(permissions);
             }
         }
     }

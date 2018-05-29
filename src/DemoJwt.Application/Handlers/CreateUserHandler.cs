@@ -37,9 +37,9 @@ namespace DemoJwt.Application.Handlers
                 user.AddRole(role);
             }
 
-            foreach (var policy in request.Policies)
+            foreach (var policy in request.Permissions)
             {
-                user.AddPolicy(policy);
+                user.AddPermission(policy);
             }
 
             if (user.Invalid)
@@ -56,7 +56,7 @@ namespace DemoJwt.Application.Handlers
                 user.Name,
                 user.Email,
                 user.Roles,
-                user.Policies
+                user.Permissions
             });
 
             return response;

@@ -30,7 +30,7 @@ namespace DemoJwt.Application.Handlers
                 user.Name,
                 user.Email,
                 user.Roles,
-                user.Policies
+                user.Permissions
             });
 
             return response;

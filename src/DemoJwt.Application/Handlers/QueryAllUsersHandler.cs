@@ -28,7 +28,7 @@ namespace DemoJwt.Application.Handlers
                 a.Name,
                 a.Email,
                 a.Roles,
-                a.Policies
+                a.Permissions
             });
 
             response.AddValue(result);

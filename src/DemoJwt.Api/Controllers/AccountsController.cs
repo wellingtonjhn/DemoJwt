@@ -68,7 +68,7 @@ namespace DemoJwt.Api.Controllers
         }
 
         /// <summary>
-        /// Alteara a senha do usuário logado
+        /// Altera a senha do usuário logado
         /// </summary>
         /// <param name="command">Comando de alteração de senha</param>
         /// <returns>Mensagem de sucesso ou de erro</returns>

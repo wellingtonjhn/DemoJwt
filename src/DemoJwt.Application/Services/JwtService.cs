@@ -61,9 +61,9 @@ namespace DemoJwt.Application.Services
                 identity.AddClaim(new Claim(ClaimTypes.Role, role));
             }
 
-            foreach (var policy in user.Policies)
+            foreach (var policy in user.Permissions)
             {
-                identity.AddClaim(new Claim("policies", policy));
+                identity.AddClaim(new Claim("permissions", policy));
             }
 
             return identity;

@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -26,14 +25,13 @@ namespace DemoJwt.Api.Policies
             return Task.CompletedTask;
         }
 
-        private bool IsAdministrator() =>
-            GetClaim(ClaimTypes.Role, AdministratorRoleName) != null;
+        private bool IsAdministrator() => 
+            GetClaim(ClaimTypes.Role, AdministratorRoleName);
 
         private bool HasRequirements(DeleteUserRequirement requirement) =>
-            GetClaim(ClaimTypes.Role, requirement.RequiredRole) != null;
+            GetClaim("permissions", requirement.RequiredPermission);
 
-        private Claim GetClaim(string type, string value) =>
-            _context.User.Claims.FirstOrDefault(a => a.Type.Equals(type) && a.Value.Equals(value));
+        private bool GetClaim(string type, string value) => _context.User.HasClaim(type, value);
 
     }
 }
