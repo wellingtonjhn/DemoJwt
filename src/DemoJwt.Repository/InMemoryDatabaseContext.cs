@@ -5,6 +5,7 @@ namespace DemoJwt.Repository
 {
     public class InMemoryDatabaseContext
     {
-        public IList<User> Users { get; } = new List<User>();
+        public ISet<User> Users { get; } = new HashSet<User>();
+        public ISet<RefreshToken> RefreshTokens { get; } = new HashSet<RefreshToken>();
     }
 }

@@ -39,7 +39,7 @@ namespace DemoJwt.Api.Controllers
         /// <param name="command">Informações de login</param>
         /// <returns>Token JWT</returns>
         [HttpPost, AllowAnonymous, Route("login")]
-        public async Task<IActionResult> Authenticate([FromBody] AuthenticateUser command)
+        public async Task<IActionResult> Authenticate([FromBody] Authenticate command)
         {
             var response = await _mediator.Send(command);
             if (response.HasMessages)

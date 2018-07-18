@@ -15,4 +15,10 @@ namespace DemoJwt.Application.Contracts
         Task Save(User user);
         Task Remove(User user);
     }
+
+    public interface IRefreshTokenRepository
+    {
+        Task<RefreshToken> Get(string username);
+        Task Save(RefreshToken refreshToken);
+    }
 }

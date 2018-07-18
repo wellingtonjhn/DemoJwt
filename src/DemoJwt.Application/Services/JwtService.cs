@@ -3,10 +3,9 @@ using DemoJwt.Application.Models;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Security.Principal;
-using Newtonsoft.Json;
 
 namespace DemoJwt.Application.Services
 {
@@ -19,7 +18,7 @@ namespace DemoJwt.Application.Services
             _settings = settings;
         }
 
-        public object CreateJwtToken(User user)
+        public JsonWebToken CreateJsonWebToken(User user)
         {
             var identity = GetClaimsIdentity(user);
             var handler = new JwtSecurityTokenHandler();
@@ -30,29 +29,52 @@ namespace DemoJwt.Application.Services
                 Audience = _settings.Audience,
                 IssuedAt = _settings.IssuedAt,
                 NotBefore = _settings.NotBefore,
-                Expires = _settings.Expiration,
+                Expires = _settings.AccessTokenExpiration,
                 SigningCredentials = _settings.SigningCredentials
             });
 
-            var jwtToken = handler.WriteToken(securityToken);
+            var accessToken = handler.WriteToken(securityToken);
 
-            return new
+            return new JsonWebToken
             {
-                access_token = jwtToken,
-                token_type = "bearer",
-                expires_in = (int)_settings.ValidFor.TotalSeconds,
+                AccessToken = accessToken,
+                RefreshToken = CreateRefreshToken(user.Email),
+                ExpiresIn = (long)TimeSpan.FromMinutes(_settings.ValidForMinutes).TotalSeconds
             };
         }
 
-        private ClaimsIdentity GetClaimsIdentity(User user)
+        private RefreshToken CreateRefreshToken(string username)
+        {
+            var refreshToken = new RefreshToken
+            {
+                Username = username,
+                ExpirationDate = _settings.RefreshTokenExpiration
+            };
+
+            string token;
+            var randomNumber = new byte[32];
+
+            using (var rng = RandomNumberGenerator.Create())
+            {
+                rng.GetBytes(randomNumber);
+                token = Convert.ToBase64String(randomNumber);
+            }
+
+            refreshToken.Token = token.Replace("+", string.Empty)
+                .Replace("=", string.Empty)
+                .Replace("/", string.Empty);
+
+            return refreshToken;
+        }
+
+        private static ClaimsIdentity GetClaimsIdentity(User user)
         {
             var identity = new ClaimsIdentity
             (
                 new GenericIdentity(user.Email),
                 new[] {
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                    new Claim(JwtRegisteredClaimNames.Sub, user.Name),
-                    new Claim(JwtRegisteredClaimNames.Iat, $"{ToUnixEpochDate(_settings.IssuedAt)}", ClaimValueTypes.Integer64),
+                    new Claim(JwtRegisteredClaimNames.Sub, user.Name)
                 }
             );
 
@@ -67,11 +89,6 @@ namespace DemoJwt.Application.Services
             }
 
             return identity;
-        }
-
-        private static long ToUnixEpochDate(DateTime date)
-        {
-            return (long)Math.Round((date.ToUniversalTime() - new DateTimeOffset(1970, 1, 1, 0, 0, 0, TimeSpan.Zero)).TotalSeconds);
         }
     }
 }

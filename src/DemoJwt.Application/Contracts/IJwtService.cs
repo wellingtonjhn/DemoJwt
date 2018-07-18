@@ -4,6 +4,6 @@ namespace DemoJwt.Application.Contracts
 {
     public interface IJwtService
     {
-        object CreateJwtToken(User user);
+        JsonWebToken CreateJsonWebToken(User user);
     }
 }

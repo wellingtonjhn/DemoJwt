@@ -25,6 +25,7 @@ namespace DemoJwt.IoC
         {
             services.AddSingleton<InMemoryDatabaseContext>();
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
         }
 
         private static void AddMediatr(this IServiceCollection services)
