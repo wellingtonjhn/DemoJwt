@@ -3,7 +3,6 @@ using DemoJwt.Application.Core;
 using DemoJwt.Application.Services;
 using DemoJwt.Repository;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 
@@ -15,7 +14,6 @@ namespace DemoJwt.IoC
         {
             services.AddRepositories();
             services.AddServices();
-            services.AddAuthenticatedUser();
             services.AddMediatr();
 
             return services;
@@ -41,12 +39,5 @@ namespace DemoJwt.IoC
             services.AddSingleton<JwtSettings>();
             services.AddScoped<IJwtService, JwtService>();
         }
-
-        private static void AddAuthenticatedUser(this IServiceCollection services)
-        {
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddScoped<AuthenticatedUser>();
-        }
-
     }
 }
